@@ -3,44 +3,58 @@ import React from "react";
 import {VisualizeRatingsPage} from "../components/VisualizeRatingsPage";
 
 import {Socket} from "../Socket";
+import {GetRatingScoresRequestResponseData} from "../../shared/GetRatingScoresRequestTypes";
+import {VisualizeRatingsPageProps} from "../components/VisualizeRatingsPage";
 
-export class VisualizeRatingsApp extends React.Component<any, any> {
+export class VisualizeRatingsApp extends React.Component<any, VisualizeRatingsAppState> {
   socket: Socket;
 
   constructor(props) {
     super(props);
 
     this.state = {
-      ready: false,
-      response: null
+      lastUpdateTimestamp: 0,
+      lastResponse: {
+        submissions: [],
+        judges: [],
+        scores: []
+      }
     };
 
     this.socket = new Socket();
+
+    this.loadVisualization();
   }
 
   loadVisualization() {
-    this.setState({
-      ready: false
-    });
-
     this.socket.sendRequest({
       requestName: "REQUEST_GET_RATING_SCORES"
-    }).then(response => {
+    }).then((response: GetRatingScoresRequestResponseData) => {
       this.setState({
-        ready: true,
-        response
+        lastUpdateTimestamp: Date.now(),
+        lastResponse: response
       });
     });
+  }
+
+  getPageProps(): VisualizeRatingsPageProps {
+    return {
+      response: this.state.lastResponse,
+      timestamp: this.state.lastUpdateTimestamp,
+
+      onReload: () => this.loadVisualization()
+    };
   }
 
   render() {
     return React.createElement(
       VisualizeRatingsPage,
-      {
-        ready: this.state.ready,
-        response: this.state.response,
-        onLoadVisualization: this.loadVisualization.bind(this)
-      }
+      this.getPageProps()
     );
   }
+}
+
+interface VisualizeRatingsAppState {
+  lastUpdateTimestamp: number;
+  lastResponse: GetRatingScoresRequestResponseData;
 }
