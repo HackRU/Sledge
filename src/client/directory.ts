@@ -9,6 +9,7 @@ import {ControlPanelApp} from "./apps/ControlPanelApp";
 import {VisualizePrizesApp} from "./apps/VisualizePrizesApp";
 import {SubmissionManagementApp} from "./apps/SubmissionManagementApp";
 import {HomeApp} from "./apps/HomeApp";
+import { AnalyzeApp } from "./apps/AnalyzeApp";
 
 export interface ApplicationConstructor {
   new(props: {}): React.Component<{}, any>;
@@ -56,4 +57,8 @@ export const pages: Array<PageListing> = [{
   name: "Submission Management",
   path: "submissionmanagement",
   component: SubmissionManagementApp
+}, {
+  name: "Analyze Results",
+  path: "analyze",
+  component: AnalyzeApp
 }];

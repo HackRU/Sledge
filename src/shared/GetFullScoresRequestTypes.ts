@@ -12,12 +12,27 @@ export interface GetFullScoresResponseData {
   assignments: Array<Assignment>;
 }
 
-export interface Assignment {
+export type Assignment = RatingAssignment | RankingAssignment;
+
+export interface RatingAssignment {
+  id: number,
+  type: 1,
+  judgeIndex: number,
+  priority: number,
+  active: boolean
+
+  submissionIndex: number,
+  noShow: boolean,
+  rating: number,
+  ratings: Array<number>
+}
+
+export interface RankingAssignment {
   id: number,
   type: number,
   judgeIndex: number,
   priority: number,
-  active: boolean,
+  active: boolean
 
   // For RatingAssignments
   submissionIndex?: number,
