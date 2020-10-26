@@ -12,7 +12,7 @@ import {HomeApp} from "./apps/HomeApp";
 import { AdminApp } from "./apps/AdminApp";
 import {OverallRatingsApp} from "./apps/OverallRatingsApp";
 import {Application, ApplicationProps} from "./Application";
-
+import {JudgingAnalysis} from "./apps/JudgingAnalysis";
 export interface ApplicationConstructor {
   new(props: ApplicationProps): Application<any>;
 }
@@ -67,4 +67,9 @@ export const pages: Array<PageListing> = [{
   name: "Overall Ratings",
   path: "overallratings",
   component: OverallRatingsApp
-}];
+}, {
+  name: "Judging Analytics",
+  path: "judginganalytics",
+  component: JudgingAnalysis
+}
+];

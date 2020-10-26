@@ -27,21 +27,22 @@ export class JudgingAnalysis extends Application<JudgingAnalysisState> {
         status: "READY",
         response: res
       });
+      console.log(res);
     });
   }
 
   render() {
     return (
       <Container id="OverallRatingsPage">
-        <h1>{`Overall Ratings`}</h1>
+        <h1>{`Hacks Judged per Judge`}</h1>
         {this.state.status === "READY" && (
-          <OverallRatingsBarChart
-            data={getAvgOverall(this.state.response!)}
+          <JudgingAnalyticsBarChart
+            data={getHacksPerJudge(this.state.response!)}
           />
         )}
         {this.state.status === "READY" && (
           <OverallRatingsTable
-            data={getAvgOverall(this.state.response!)}
+            data={getHacksPerJudge(this.state.response!)}
           />
         )}
         {this.state.status === "LOADING" && (
@@ -59,72 +60,45 @@ interface JudgingAnalysisState {
   response?: GetFullScoresResponseData;
 }
 
-const OverallRatingsBarChart = (props: OverallRatingsBarChartProps) => (
+const JudgingAnalyticsBarChart = (props: JudgingAnalyticsBarChartProps) => (
   <BarChart width={1000} height={500} data={props.data}>
     <CartesianGrid strokeDasharray="3 3" />
-    <XAxis dataKey="name" />
+    <XAxis dataKey="Judge" />
     <YAxis />
     <Tooltip/>
     <Legend />
-    <Bar dataKey="average" />
+    <Bar dataKey="Hacks Judged" />
   </BarChart>
 );
 
-const OverallRatingsTable = (props: OverallRatingsBarChartProps) => (
+const OverallRatingsTable = (props: JudgingAnalyticsBarChartProps) => (
   <table>
     <thead>
       <tr>
-        <th>Location</th>
-        <th>Score</th>
-        <th>Name</th>
+        <th>Judge</th>
+        <th>Hacks Judged</th>
       </tr>
     </thead>
     <tbody>
     {props.data.map(s => (
       <tr>
-        <td>{s.location}</td>
-        <td>{s.average}</td>
-        <td>{s.name}</td>
+        <td>{s.judge}</td>
+        <td>{s.hacksjudged}</td>
       </tr>
     ))}
     </tbody>
   </table>
 );
 
-interface OverallRatingsBarChartProps {
+interface JudgingAnalyticsBarChartProps {
   data: BarData
 }
 
-function getAvgOverall(data: GetFullScoresResponseData): BarData {
-  // Initialize the sum and count to 0 for each submission
-  let sumCount = data.submissions.map(_s => ({
-    sum: 0,
-    count: 0
-  }));
+function getHacksPerJudge(data: GetFullScoresResponseData): BarData {
 
-  // Considering only inactive rating assignments, add up the total
-  // and sum of ratings
-  for (let asm of data.assignments) {
-    if (asm.type === ASSIGNMENT_TYPE_RATING && !asm.active) {
-      sumCount[asm.submissionIndex!].sum += asm.rating!;
-      sumCount[asm.submissionIndex!].count++;
-    }
-  }
-
-  // Return the name of each submission with the calculated average, or slightly
-  // negative if unrated
-  return sumCount.map((sc, i) => ({
-    name: data.submissions[i].name,
-    average: sc.count > 0 ? sc.sum / sc.count : -.01,
-    location: data.submissions[i].location,
-    index: i
-  })).sort((a,b) => {
-    return data.submissions[a.index].location - data.submissions[b.index].location
-  });
 }
 
 interface BarData extends Array<{
-  name: string,
-  average: number,
-  location: number
+  judge: string,
+  hacksjudged: number
 }> {}
