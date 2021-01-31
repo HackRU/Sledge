@@ -1,5 +1,4 @@
 module.exports = {
-  name: "Sledge",
-  verbose: true,
-  testMatch: ["<rootDir>/lib/**/*.test.js"]
+  preset: 'ts-jest',
+  testEnvironment: 'node',
 };
